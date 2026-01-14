@@ -126,26 +126,26 @@ def main(a, b):
     y_path = axidraw.drawing.scale2(x=y_path, size=axidraw.dinA_inch[6], mi=mi, ma=ma, padding=0.5, keep_aspect=True)
     x_path = np.array(x_path)
     y_path = np.array(y_path)
-    y_path[:, :, 0] -= (x_path[0, 1, 0] - x_path[0, 0, 0])
-    x_path[:, :, 1] += 0.8
-    y_path[:, :, 1] += 0.8
+    # y_path[:, :, 0] -= (x_path[0, 1, 0] - x_path[0, 0, 0])
+    # x_path[:, :, 1] += 0.8
+    # y_path[:, :, 1] += 0.8
     # drawing = axidraw.Drawing(x_path.tolist())  # red
     drawing = axidraw.Drawing(y_path.tolist())  # blue
-    # axidraw.draw(drawing=drawing)
+    axidraw.draw(drawing=drawing)
 
 
-    fig, ax = mpl2.new_fig(aspect=1, width=axidraw.dinA_inch[6][0], height=axidraw.dinA_inch[6][1])
-    ax.set_xlim(0, axidraw.dinA_inch[6][0])  # TODO turn limits to make it consistent with everything
-    ax.set_ylim(0, axidraw.dinA_inch[6][1])
-    # TODO turn limits to make it consistent with everything
-
-    for xx in x_path:
-        ax.plot(xx[:, 0], xx[:, 1], color='red', ls='-', lw=3)
-        plt.pause(0.01)
-
-    for yy in y_path:
-        ax.plot(yy[:, 0], yy[:, 1], color='blue', ls='-', lw=3)
-        plt.pause(0.01)
+    # fig, ax = mpl2.new_fig(aspect=1, width=axidraw.dinA_inch[6][0], height=axidraw.dinA_inch[6][1])
+    # ax.set_xlim(0, axidraw.dinA_inch[6][0])  # TODO turn limits to make it consistent with everything
+    # ax.set_ylim(0, axidraw.dinA_inch[6][1])
+    # # TODO turn limits to make it consistent with everything
+    #
+    # for xx in x_path:
+    #     ax.plot(xx[:, 0], xx[:, 1], color='red', ls='-', lw=3)
+    #     plt.pause(0.01)
+    #
+    # for yy in y_path:
+    #     ax.plot(yy[:, 0], yy[:, 1], color='blue', ls='-', lw=3)
+    #     plt.pause(0.01)
 
 
 def stitches2path(x, limits):
@@ -164,12 +164,13 @@ def stitches2path(x, limits):
 
 if __name__ == '__main__':
     # main(a='LisaSophiaTenhumberg', b='JohannesValentinHamm')
-    # main(a='Julia', b='Hamm')
+    # main(a='CarolinaDiess', b='JohannesTenhumberg')
+    main(a='MichaelaAigner', b="ChristophFraundorfer")
     # main(a='Johannes', b='Tenhumberg')
     # main(a='Theresa', b='Tenhumberg')
 
-    main(b='SamiMahmoud 18März2023',
-         a='Sonnige Bank im Grünen'[::-1])
+    # main(b='SamiMahmoud 18März2023',
+    #      a='Sonnige Bank im Grünen'[::-1])
 
     # main(b='Ein Teil des Teils der Anfangs alles war',
     #      a='Ein Teil der Finsternis, die sich das Licht gebar')

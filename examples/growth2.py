@@ -1,4 +1,4 @@
-import axi
+import axidraw
 import heapq
 import layers
 import random
@@ -7,7 +7,7 @@ from collections import defaultdict
 from math import pi, sin, cos, hypot, floor
 from shapely.geometry import LineString
 
-W, H = axidraw.A3_SIZE
+W, H = axidraw.dinA_inch[6]
 
 def make_layer():
     x = layers.Noise(8).add(layers.Constant(0.6)).clamp()
@@ -60,11 +60,13 @@ class Grid(object):
         self.points.pop((i, j))
         self.lines.pop((i, j))
 
+
 def new_angle(a, d):
     if d < 0.1:
         return random.random() * 2 * pi
     else:
         return random.gauss(a, pi / 12)
+
 
 def poisson_disc(layer, x1, y1, x2, y2, r, n):
     grid = Grid(r)
@@ -133,7 +135,7 @@ def make_path(pairs):
 def main():
     layer = make_layer()
     layer.save('layer.png', 0, 0, W, H, 50)
-    points, pairs = poisson_disc(layer, 0, 0, W, H, 0.05, 8)
+    points, pairs = poisson_disc(layer, 0, 0, W, H, 0.03, 8)
     path = make_path(pairs)
     d = axidraw.Drawing([path])
     # d = d.rotate_and_scale_to_fit(W, H, step=90)

@@ -5,6 +5,8 @@ from wzk import mpl2, ltd
 from axidraw.paths import (simplify_paths, sort_paths, join_paths, crop_paths,
                            convex_hull, expand_quadratics, paths_length)
 
+from axidraw import units
+
 
 class Drawing(object):
     def __init__(self, paths=None):
@@ -242,6 +244,7 @@ class Drawing(object):
         return Drawing(paths)
 
     def render(self, line_width=None, title=None,
+               dinA=None, color="black",
                ax=None):
         if ax is None:
             fig, ax = mpl2.new_fig(aspect=1, title=title)
@@ -249,9 +252,13 @@ class Drawing(object):
         for xx in self.paths:
             if len(xx) > 1:
                 xx = np.array(xx)
-                ax.plot(*xx.T, color='black')
-
+                ax.plot(*xx.T, color=color)
+        if dinA:
+            ax.set_xlim(0, units.dinA_inch[6][0])
+            ax.set_ylim(0, units.dinA_inch[6][1])
+        fig.show()
         return ax
+
 
 def paths_wrapper(paths):
     if paths is None:
@@ -259,19 +266,19 @@ def paths_wrapper(paths):
 
     if isinstance(paths, np.ndarray):
         if paths.ndim == 1 or paths.shape[1] == 3:
-            paths = [np.array(p) for p in paths]
+            paths = [np.array(p, dtype=float) for p in paths]
         elif paths.ndim == 2:
-            paths = [np.array(paths)]
+            paths = [np.array(paths, dtype=float)]
         elif paths.ndim == 3:
-            paths = [np.array(p) for p in paths]
+            paths = [np.array(p, dtype=float) for p in paths]
         else:
             raise ValueError('Invalid paths array')
 
     elif isinstance(paths, list):
         if ltd.depth(paths) == 2:
-            paths = [np.array(paths)]
+            paths = [np.array(paths, dtype=float)]
         elif ltd.depth(paths) == 3:
-            paths = [np.array(p) for p in paths]
+            paths = [np.array(p, dtype=float) for p in paths]
     else:
         raise ValueError('Invalid paths list')
 

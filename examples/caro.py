@@ -20,7 +20,6 @@ x = axidraw.drawing.scale2(x, size=axidraw.dinA_inch[6], padding=2*axidraw.cm2in
                            keep_aspect=False)
 
 drawing = axidraw.Drawing(x)
-# drawing.render(title=str(seed))
-# drawing = drawing.sort_paths()
+drawing.render(title=str(seed))
 
 axidraw.draw(drawing)

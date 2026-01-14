@@ -1,5 +1,6 @@
 import random
 import numpy as np
+from wzk import mpl2
 
 from collections import defaultdict
 from math import pi, sin, cos, hypot, floor
@@ -58,6 +59,8 @@ def max_angle(i, d):
 
 
 def new_angle(a, d):
+    # return random.gauss(a, pi / 20)
+
     if d < 0.1:
         return random.random() * 2 * pi
     else:
@@ -72,45 +75,60 @@ def choice(items):
 def poisson_disc(x1, y1, x2, y2, r, n):
     grid = Grid(r)
     active = []
-    for i in range(1):
-        # x = x1 + random.random() * (x2 - x1)
-        # y = y1 + random.random() * (y2 - y1)
-        x = (x1 + x2) / 2.0
-        y = (y1 + y2) / 2.0
-        a = random.random() * 2 * pi
-        if grid.insert(x, y):
-            active.append((x, y, a, 0, 0, i))
-    pairs = []
+    x = (x1 + x2) / 2.0
+    y = (y1 + y2) / 2.0
+    a = random.random() * 2 * pi
+    b = random.random() * 2 * pi
+    grid.insert(x, y-1)
+    active.append((x, y-1, a, 0, 0, 0))
+
+    grid.insert(x, y+1)
+    active.append((x, y+1, b, 0, 0, 1))
+    # fig, axx = mpl2.new_fig()
+    eps = 1e-6
+    pairs = [((a[0], a[1]), (a[0]+eps, a[1]+eps)) for a in active]
+
+    ii = 0
     while active:
-        ax, ay, aa, ai, ad, ag = record = choice(active)
+        # ax, ay, aa, ai, ad, ag = record = choice(active)
+        npactive = np.array(active)
+        try:
+            iii = np.arange(len(active))[npactive[:, -1] == ii][-1]
+        except IndexError:
+            iii = -1
+        ax, ay, aa, ai, ad, ag = record = active[iii]
         for i in range(n):
             a = new_angle(aa, ad)
             d = random.random() * r + r
             x = ax + cos(a) * d
             y = ay + sin(a) * d
             if x < x1 or y < y1 or x > x2 or y > y2:
+                ii = (ii + 1) % 2
                 continue
-            if ad + d > 4.25:
+            if ad + d > 3.25:
+                ii = (ii + 1) % 2
                 continue
             pair = ((ax, ay), (x, y))
             line = LineString(pair)
             if not grid.insert(x, y, line):
                 continue
             pairs.append(pair)
+            # axx.plot(*np.array(pair).T, color=)
+            # mpl2.plt.pause(0.01)
             active.append((x, y, a, ai + 1, ad + d, ag))
-            active.sort(key=lambda x: -x[4])
+            # active.sort(key=lambda x: -x[4])
             break
         else:
             active.remove(record)
     return grid.points.values(), pairs
 
 
-def make_path(pairs):
+def make_path(pairs, i=0):
     lookup = defaultdict(list)
     for parent, child in pairs:
         lookup[parent].append(child)
-    root = pairs[0][0]
     path = []
+    root = pairs[i][0]
     stack = []
     stack.append(root)
     while stack:
@@ -121,33 +139,49 @@ def make_path(pairs):
             continue
         child = lookup[point].pop()
         stack.append(child)
+
     return path
 
 
 def main():
-    # random.seed(1182)
-    points, pairs = poisson_disc(x1=0, y1=0, x2=11, y2=8.5, r=0.035, n=32)
-    # points, pairs = poisson_disc(x1=0, y1=0, x2=11, y2=8.5, r=0.1, n=32)
-    path = make_path(pairs)
+    # random.seed(68)
+    # for seed in range(125, 35):
+    seed = 129
+    random.seed(seed)
+        # points, pairs = poisson_disc(x1=0, y1=0, x2=11, y2=8.5, r=0.035, n=32)
+    points, pairs = poisson_disc(x1=0, y1=0, x2=axidraw.dinA_inch[6][0], y2=axidraw.dinA_inch[6][1], r=0.04, n=32)
+    path0 = make_path(pairs, i=0)
+    path1 = make_path(pairs, i=1)
 
+    path = path0 + path1
 
     path = np.array(path)
     pp = np.unique(path, axis=0)
     print(pp.shape)
     print(path.shape)
-    # fig, ax = new_fig(aspect=1)
+    # from wzk import mpl2
+    # fig, ax = mpl2.new_fig(aspect=1)
     # for i in range(len(path)-1):
     #     ax.plot(*path[i:i+2, :].T, color='black', lw=0.5)
-    #     plt.pause(0.01)
+    #     mpl2.plt.pause(0.001)
 
-    path = axidraw.drawing.scale2(path, size=axidraw.dinA_inch[6], padding=0.5, keep_aspect=True, center=True)
-    drawing = axidraw.Drawing(path)
-    drawing.render()
+    path = axidraw.drawing.scale2(path, size=axidraw.dinA_inch[6], padding=0.5*axidraw.cm2inch, keep_aspect=True,
+                                  center=True)
 
-    # axidraw.draw(drawing=drawing)
+    path00 = [path[0][:len(path0)]]
+    path11 = [path[0][len(path0):]]
+    drawing = axidraw.Drawing(path00)
+    ax = drawing.render(dinA=6, color="blue")
+    axidraw.draw(drawing=drawing)
+    input("change color")
 
+    drawing = axidraw.Drawing(path11)
+    # drawing.render(dinA=6, ax=ax, color="red", title=f"{seed}")
+    axidraw.draw(drawing=drawing)
+    a = 1
 
 if __name__ == '__main__':
     # points, pairs = poisson_disc(0, 0, 11, 8.5, 0.035, 32)
     # path = make_path(pairs)
     main()
+#

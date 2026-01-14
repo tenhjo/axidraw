@@ -58,7 +58,7 @@ def main():
     for segment in segments:
         paths.append(list(segment.coords))
     d = axidraw.Drawing(paths)
-    d = d.sort_paths()
+    d = axidraw.sort_paths(d)
     d = d.join_paths(0.001)
     d.render()
 

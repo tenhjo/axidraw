@@ -156,3 +156,42 @@ def get_part(x, i, j, size_element, size_total):
     x_ij = translate(x_ij, offset=-np.array([i * d0, j * d1]))
 
     return x_ij
+
+
+def theodorus_spiral(n, alpha=1.1):
+
+    pi2 = 2 * np.pi
+
+    def get_phis(n):
+        x = np.arange(1, n + 1)
+        phi = np.arctan(1 / np.sqrt(x))
+        return np.cumsum(np.hstack([np.zeros(1), phi]))
+
+    phi = get_phis(n)
+    sn = np.sqrt(np.arange(1, n + 1))
+    sn = np.hstack([np.ones(1), sn])
+
+    x = np.array([np.cos(phi) * sn,
+                  np.sin(phi) * sn]).T
+
+    x_center = np.zeros((len(x), 2, 2))
+    x_center[:, 1, :] = x
+
+    for i in range(len(x_center)):
+        if phi[i] / pi2 < 1:
+            continue
+
+        phi1 = phi[:i] - (phi[i] - pi2)
+        s = np.sign(phi1)
+        s = s[:-1] + s[1:]
+
+        try:
+            j = np.nonzero(s == 0)[0][0]
+            x_center[i, 0, :] = [np.cos(phi[i]) * (sn[j] * alpha),
+                                 np.sin(phi[i]) * (sn[j] * alpha)]
+        except IndexError:
+            pass
+
+    x = [x.tolist()] + x_center.tolist()
+    return x
+

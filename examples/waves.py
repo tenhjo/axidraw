@@ -1,10 +1,6 @@
-import random
 import numpy as np
-from wzk import mpl2, np2, spatial, geometry
+from wzk import np2, spatial
 
-from collections import defaultdict
-from math import pi, sin, cos, hypot, floor
-from shapely.geometry import LineString
 import axidraw
 
 amplitude = 0.012
@@ -63,12 +59,6 @@ paths0 = full(50)
 paths1 = circle()
 paths = paths0 + paths1
 
-# fig, ax = mpl2.new_fig(aspect=1)
-# for xy in paths:
-#     ax.plot(*xy.T, color="black")
-#     mpl2.plt.pause(0.1)
-#
-#
 
 size = np.array([12, 18])*axidraw.cm2inch
 print(size)
